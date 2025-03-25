@@ -24,6 +24,7 @@ try:
     
     # Look up the workspace
     table_name = f"{TABLE_PREFIX}workspaces0"
+    # Note: Using %% to escape % in the format string for DATE_FORMAT
     cursor.execute(f"SELECT wsid, nextNoteNum, DATE_FORMAT(time, '%%Y-%%m-%%d %%H:%%i:%%s') FROM {table_name} WHERE wsname=%s", [wsname])
     row = cursor.fetchone()
     
@@ -78,16 +79,16 @@ function loadinit()
   init();
 """)
     
-    # Add notes to the JavaScript
+    # Add notes to the JavaScript with proper escaping for JavaScript strings
     for note in notes:
         noteid, text, bgcolor, xposition, yposition, height, width, zindex = note
         
-        # Important: Decode the text to handle %20 and other URL-encoded characters
-        decoded_text = urllib.parse.unquote(text) if text else ""
-        # Escape for JavaScript - single quotes need to be escaped
-        escaped_text = decoded_text.replace("'", "\\'")
+        # First decode any URL-encoded content in text
+        decoded_text = urllib.parse.unquote(text)
         
-        # Create the note with ALL parameters, including position
+        # Then escape for JavaScript
+        escaped_text = decoded_text.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
+        
         print(f"""  workspace.createNote({{
       'id': '{noteid}',
       'xPos': {xposition},
@@ -96,7 +97,7 @@ function loadinit()
       'width': {width},
       'bgcolor': '{bgcolor}',
       'zIndex': {zindex},
-      'text': '{escaped_text}'
+      'text': "{escaped_text}"
   }}, true);""")
     
     # Finish the JavaScript setup
