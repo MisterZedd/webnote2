@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 
-print("Content-type: text/xml\n")
-
 import sys
 import os
 from xml.dom.minidom import parseString
 import MySQLdb
 import datetime
 import traceback
+import urllib.parse
 
 try:
     # Read input data
@@ -17,7 +16,11 @@ try:
     # Parse XML
     dom = parseString(data)
     wsRoot = dom.getElementsByTagName('workspace').item(0)
+    
+    # Get workspace name - need to unescape it
     wsname = wsRoot.getAttribute('name')
+    wsname = urllib.parse.unquote(wsname)
+    
     nextNoteNum = wsRoot.getAttribute('nextNoteNum')
     
     # Import database settings
@@ -76,11 +79,12 @@ try:
     conn.commit()
     
     # Return success
+    print('Content-type: text/xml\n')
     print('<return>\n  <status value="ok" update="%s"/>\n</return>' % timestamp)
     
 except Exception as e:
-    # Log error to file
-    with open('/var/www/webnote/save_error.log', 'a') as f:
+    # Log error to a file
+    with open('/tmp/webnote_save_error.log', 'a') as f:
         f.write(f"\n--- {datetime.datetime.now()} ---\n")
         f.write(f"Error: {str(e)}\n")
         f.write(traceback.format_exc())
@@ -88,4 +92,5 @@ except Exception as e:
             f.write("\nData (first 500 chars): " + data[:500] + "\n")
     
     # Return error message
+    print('Content-type: text/xml\n')
     print('<return>\n  <status value="error"/>\n</return>')
