@@ -1,0 +1,9 @@
+# Ignore log files
+*.log
+# Ignore backup files
+*.bak*
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+# Ignore local configuration
+etc/common.py

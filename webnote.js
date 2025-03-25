@@ -1217,7 +1217,15 @@ var workspace =
     if (get(note.id))
     {
       this.reZOrder(note.id);
-      return note;
+      
+    // Explicit position handling added by patch
+    if (options && typeof options.xposition !== 'undefined' && typeof options.yposition !== 'undefined') {
+        ret.xposition = options.xposition;
+        ret.yposition = options.yposition;
+        ret.div.style.left = options.xposition + 'px';
+        ret.div.style.top = options.yposition + 'px';
+    }
+    return note;
     }
 
     if (!('height' in note)) note.height = 150;

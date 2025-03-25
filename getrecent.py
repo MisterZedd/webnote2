@@ -28,5 +28,5 @@ def main():
 if '__main__' == __name__:
   try:
     main()
-  except Exception, e:
+  except Exception as e:
     message.Error(e)

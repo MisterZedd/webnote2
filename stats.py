@@ -20,7 +20,7 @@ class Stats:
     
     def mostActive(self):
         all_results = []
-        for i in xrange(TABLE_SHARDS):
+        for i in range(TABLE_SHARDS):
           notes_table = '%snotes%s' % (TABLE_PREFIX, Db.getShardNum(i))
           workspace_table = '%sworkspaces%s' % (TABLE_PREFIX, Db.getShardNum(i))
           
@@ -48,7 +48,7 @@ class Stats:
 
     def mostRecent(self):
         all_results = []
-        for i in xrange(TABLE_SHARDS):
+        for i in range(TABLE_SHARDS):
           notes_table = '%snotes%s' % (TABLE_PREFIX, Db.getShardNum(i))
           workspace_table = '%sworkspaces%s' % (TABLE_PREFIX, Db.getShardNum(i))
           
@@ -86,24 +86,24 @@ class Stats:
         
         columns = map(lambda x: "<" + tag + ">" + link(str(x)) + "</" + tag + ">", tuple)
         for c in columns:
-            print c
+            print(c)
         
     def printResults(self, table, header):
         """Prints a table"""
-        print "<table><tr>"
+        print("<table><tr>")
         self.printTableRow(header, 'th')
-        print "</tr>"
+        print("</tr>")
         
         for row in table:
-            print "<tr>"
+            print("<tr>")
             self.printTableRow(row)
-            print "</tr>"
+            print("</tr>")
 
-        print "</table>"
+        print("</table>")
 
     def genStats(self):
-        print "Content-type: text/html\n"
-        print """<html>
+        print("Content-type: text/html\n")
+        print("")"<html>
   <head>
     <title>Webnote Statistics</title>
     <style type='text/css'>
@@ -122,16 +122,16 @@ td {
 }
     </style>
   </head>"""
-        print "<body>"
+        print("<body>")
         
         self.mostActive()
         self.mostRecent()
         
-        print "</body>\n</html>"
+        print("</body>\n</html>")
 
 if __name__ == '__main__':
   try:
       s = Stats()
       s.genStats()
-  except Exception, e:
+  except Exception as e:
       message.Error(e)

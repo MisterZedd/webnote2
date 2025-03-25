@@ -13,7 +13,7 @@ db = Db.getDBH()
 cur = db.cursor()
 
 def TruncateTables():
-  for i in xrange(Db.TABLE_SHARDS):
+  for i in range(Db.TABLE_SHARDS):
     num = Db.getShardNum(i)
     for name in ('workspaces', 'notes'):
       table_name = '%s%s%s' % (Db.TABLE_PREFIX, name, num)
@@ -49,13 +49,13 @@ def CopyData(shard_map):
       table_name = '%s%s%s' % (Db.TABLE_PREFIX, 'workspaces', shard)
       insert = insert_ws % (table_name, workspaces,
                             ','.join([str(x) for x in values]))
-      print insert
+      print(insert)
       cur.execute(insert)
 
       table_name = '%s%s%s' % (Db.TABLE_PREFIX, 'notes', shard)
       insert = insert_notes % (table_name, notes,
                                ','.join([str(x) for x in values]))
-      print insert
+      print(insert)
       cur.execute(insert)
 
 def main():

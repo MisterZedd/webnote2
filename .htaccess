@@ -1,0 +1,4 @@
+AddHandler cgi-script .py
+Options +ExecCGI +Multiviews
+AddEncoding x-gzip gz
+Options +Indexes

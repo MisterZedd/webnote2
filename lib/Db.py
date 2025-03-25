@@ -1,4 +1,4 @@
-import MySQLdb, md5
+import MySQLdb, hashlib
 from etc.common import DBHOST, DBUSER, DBPASS, DBNAME, TABLE_SHARDS, TABLE_PREFIX
 
 def getDBH():
@@ -18,7 +18,10 @@ def getShardNum(num):
 
 def getWorkspaceShard(workspace_name):
   """Given a workspace name, return the shard to look on."""
-  key = md5.md5(workspace_name).hexdigest()[:4]
+  # Encode the string to bytes before hashing in Python 3
+  if isinstance(workspace_name, str):
+      workspace_name = workspace_name.encode('utf-8')
+  key = hashlib.md5(workspace_name).hexdigest()[:4]
   shard = int(key, 16) % TABLE_SHARDS
   return getShardNum(shard)
 

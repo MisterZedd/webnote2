@@ -72,9 +72,9 @@ if '__main__' == __name__:
               lastBuildDate = dt,
               items = entries)
 
-      print "Content-type: text/xml\n"
+      print("Content-type: text/xml\n")
       rss.write_xml(sys.stdout)
   except ImportError:
     message.PlainText('RSS feeds require python2.3+')
-  except Exception, e:
+  except Exception as e:
     message.Error(e)

@@ -7,11 +7,11 @@ sys.path.insert(0, '..')
 from lib import Db
 
 cur = Db.getDBH().cursor()
-print 'db'
+print('db')
 cur.execute('select wsid, count(nid), time from wn_notes'
             ' where wsid != 15'
             ' group by wsid, time order by wsid')
 
 writer = csv.writer(open('usage.csv', 'w'))
-print 'write'
+print('write')
 writer.writerows(cur.fetchall())

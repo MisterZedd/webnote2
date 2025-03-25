@@ -86,7 +86,7 @@ def UsagePattern():
   pylab.figure()
   ax = pylab.subplot(111)
   
-  print days
+  print(days)
   bars = pylab.bar(days,
                    [sum(time_map[d].values()) for d in days],
                    width = 0.75,
