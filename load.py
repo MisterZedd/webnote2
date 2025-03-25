@@ -11,6 +11,7 @@ try:
     # Get the form data
     form = cgi.FieldStorage()
     wsname = form.getfirst('name', '').replace("'", '')
+    specified_time = form.getfirst('time', '')
     
     if not wsname:
         # No workspace name provided, redirect to index
@@ -37,8 +38,12 @@ try:
         conn.commit()
         notes = []
     else:
-        # Workspace exists, get notes
+        # Workspace exists
         wsid, nextNoteNum, lasttime = row
+        
+        # Override with specified time if provided
+        if specified_time:
+            lasttime = specified_time
         
         # Get notes
         notes_table = f"{TABLE_PREFIX}notes0"
@@ -76,26 +81,31 @@ function loadinit()
     # Add notes to the JavaScript
     for note in notes:
         noteid, text, bgcolor, xposition, yposition, height, width, zindex = note
-        # Properly escape single quotes in text - this is the fix for the syntax error
-        escaped_text = text.replace("'", "\\'")
-        # Create the note using string concatenation, not f-strings with escapes
-        print("  workspace.createNote({")
-        print("    'noteid': '" + noteid + "',")
-        print("    'text': '" + escaped_text + "',")
-        print("    'bgcolor': '" + bgcolor + "',")
-        print("    'xposition': " + str(xposition) + ",")
-        print("    'yposition': " + str(yposition) + ",")
-        print("    'height': " + str(height) + ",")
-        print("    'width': " + str(width) + ",")
-        print("    'zindex': " + str(zindex))
-        print("  });")
+        
+        # Important: Decode the text to handle %20 and other URL-encoded characters
+        decoded_text = urllib.parse.unquote(text) if text else ""
+        # Escape for JavaScript - single quotes need to be escaped
+        escaped_text = decoded_text.replace("'", "\\'")
+        
+        # Create the note with ALL parameters, including position
+        print(f"""  workspace.createNote({{
+      'id': '{noteid}',
+      'xPos': {xposition},
+      'yPos': {yposition},
+      'height': {height},
+      'width': {width},
+      'bgcolor': '{bgcolor}',
+      'zIndex': {zindex},
+      'text': '{escaped_text}'
+  }}, true);""")
     
     # Finish the JavaScript setup
-    print("  workspace.nextNoteNum = " + str(nextNoteNum) + ";")
-    print("  workspace.changed = false;")
-    print("}")
-    print("// -->")
-    print("""    </script>
+    print("""
+  workspace.nextNoteNum = """ + str(nextNoteNum) + """;
+  workspace.changed = false;
+}
+// -->
+    </script>
     <link rel="stylesheet" href="style.css" type="text/css" />
     <title>""" + wsname + """</title>
 </head>
