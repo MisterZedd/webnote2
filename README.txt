@@ -1,3 +1,5 @@
+This is all old from fork and needs to be changed
+
 A web site that you can use to take notes (like post-it notes).  Feel free
 to try it out at http://www.aypwip.org/webnote
 
